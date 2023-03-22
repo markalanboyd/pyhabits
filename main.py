@@ -1,7 +1,9 @@
 # pyenv activate pyhabits-3.11.2
+# https://pixe.la/v1/users/markalanboyd/graphs/weightchange.html
 import dotenv
 import os
 import requests
+import datetime
 from nicegui import ui
 
 # Constants
@@ -13,7 +15,7 @@ HEADERS = {
 }
 
 PIXELA_ENDPOINT = "https://pixe.la/v1/users"
-PIXELA_ENDPOINT_CREATE_GRAPH = f"{PIXELA_ENDPOINT}/{USER_NAME}/graphs"
+PIXELA_ENDPOINT_GRAPHS = f"{PIXELA_ENDPOINT}/{USER_NAME}/graphs"
 
 
 # Variables
@@ -48,19 +50,39 @@ graph_parameters = {
     "color": graph_color,
 }
 
+pixel_url = f"{PIXELA_ENDPOINT_GRAPHS}/{graph_id}"
+pixel_date = datetime.datetime.now().strftime("%Y%m%d")
+pixel_quantity = "-2"
+pixel_optionalData = ""
+
+pixel_parameters = {
+    "date": pixel_date,
+    "quantity": pixel_quantity,
+    "optionalData": pixel_optionalData,
+}
+
 # Functions
 def pixela_create_user(parameters):
     response = requests.post(url=PIXELA_ENDPOINT,
                              json=parameters)
+    response.raise_for_status()
     print(response.text)
 
 def pixela_create_graph(parameters):
-    response = requests.post(url=PIXELA_ENDPOINT_CREATE_GRAPH,
+    response = requests.post(url=PIXELA_ENDPOINT_GRAPHS,
                              json=parameters,
                              headers=HEADERS)
+    response.raise_for_status()
     print(response.text)
 
-def ui_create_user() -> None:
+def pixela_post_pixel(parameters):
+    response = requests.post(url=pixel_url,
+                             json=parameters,
+                             headers=HEADERS)
+    response.raise_for_status()
+    print(response.text)
+
+# def ui_create_user() -> None:
     ui.checkbox("I agree to the terms and conditions")
     ui.checkbox("I am not a minor")
     ui.button('Register')
@@ -70,6 +92,7 @@ def main() -> None:
     # ui.run(title="pyhabits")
     # pixela_create_user(create_user_params)
     # pixela_create_graph(graph_parameters)
+    pixela_post_pixel(pixel_parameters)
     pass
 
 
