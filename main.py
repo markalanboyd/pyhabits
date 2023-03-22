@@ -52,14 +52,27 @@ graph_parameters = {
 
 pixel_url = f"{PIXELA_ENDPOINT_GRAPHS}/{graph_id}"
 pixel_date = datetime.datetime.now().strftime("%Y%m%d")
-pixel_quantity = "-2"
+pixel_quantity = "-5"
 pixel_optionalData = ""
 
-pixel_parameters = {
+pixel_post_parameters = {
     "date": pixel_date,
     "quantity": pixel_quantity,
     "optionalData": pixel_optionalData,
 }
+
+pixel_put_date = pixel_date
+pixel_put_quantity = "5"
+pixel_put_optionalData = ""
+
+pixel_put_parameters = {
+    "quantity": pixel_put_quantity,
+    "optionalData": pixel_put_optionalData,
+}
+
+pixel_delete_date = pixel_date
+pixel_delete_url = f"{pixel_url}/{pixel_delete_date}"
+
 
 # Functions
 def pixela_create_user(parameters):
@@ -81,20 +94,34 @@ def pixela_post_pixel(parameters):
                              headers=HEADERS)
     response.raise_for_status()
     print(response.text)
+    
+def pixela_put_pixel(parameters):
+    response = requests.put(url=f"{pixel_url}/{pixel_put_date}",
+                            json=parameters,
+                            headers=HEADERS)
+    response.raise_for_status()
+    print(response.text)
 
-# def ui_create_user() -> None:
+def pixela_delete_pixel(pixel_url):
+    response= requests.delete(url=pixel_url,
+                              headers=HEADERS)
+    response.raise_for_status()
+    print(response.text)
+
+def ui_create_user() -> None:
     ui.checkbox("I agree to the terms and conditions")
     ui.checkbox("I am not a minor")
     ui.button('Register')
-
+    
 def main() -> None:
     # ui_create_user()
     # ui.run(title="pyhabits")
     # pixela_create_user(create_user_params)
     # pixela_create_graph(graph_parameters)
-    pixela_post_pixel(pixel_parameters)
+    # pixela_post_pixel(pixel_post_parameters)
+    # pixela_put_pixel(pixel_put_parameters)
+    # pixela_delete_pixel(pixel_delete_url)
     pass
-
 
 # Main
 if __name__ in {"__main__", "__mp_main__"}:
